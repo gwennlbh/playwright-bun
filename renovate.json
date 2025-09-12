@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "schedule:daily"],
+  "commitMessagePrefix": "⬆️ ",
+  "rangeStrategy": "bump",
+  "packageRules": [
+    {
+      "description": "Auto-update",
+      "matchPackageNames": ["mcr.microsoft.com/playwright"],
+      "automerge": true
+    }
+  ]
+}
