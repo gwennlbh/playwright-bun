@@ -14,4 +14,4 @@ jobs:
           bun-version: 'whatever bun version you want'
 ```
 
-A [workflow](https://github.com/gwennlbh/playwright-bun/actions/workflows/build.yml) ensures that the image is kept up-to-date
+A [workflow](https://github.com/gwennlbh/playwright-bun/actions/workflows/build.yml), together with [Renovate](https://github.com/gwennlbh/playwright-bun/issues/1) ensures that the image is kept up-to-date
