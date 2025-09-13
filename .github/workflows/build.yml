@@ -56,7 +56,7 @@ jobs:
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: stable
+          bun-version: latest
       - name: Check bun version
         run: bun --version
       - name: Get declared playwright version
