@@ -3,6 +3,8 @@ name: Build bun-compatible Playwright Docker image
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
@@ -27,7 +29,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile
-          push: true
+          push: ${{ github.event_name == 'push' }}
           tags: |
             ghcr.io/gwennlbh/playwright-bun:latest
             ghcr.io/gwennlbh/playwright-bun:${{ steps.original_image.outputs.tag }}
