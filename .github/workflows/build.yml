@@ -3,10 +3,13 @@ name: Build bun-compatible Playwright Docker image
 on:
   workflow_dispatch: 
     inputs:
-      test: 
-        type: boolean
-        description: Run tests as if this were a pull request
-        default: true
+      event_name: 
+        type: choice
+        description: Simulate the event that triggered the workflow
+        default: pull_request
+        options:
+          - push
+          - pull_request
   push:
     branches: [main]
   pull_request:
@@ -42,7 +45,8 @@ jobs:
             echo "tags=`tagurl $tag`,`tagurl latest`" >> $GITHUB_OUTPUT
           fi
         env:
-          EVENT: ${{ github.event_name }}
+          EVENT: ${{ github.event.inputs.event_name || github.event_name }}
+
           # Shaw! Guarana!! GIT GUD!
           SHAW: ${{ github.sha }}
       - name: Build Docker image
@@ -53,7 +57,7 @@ jobs:
           tags: ${{ steps.original_image.outputs.tags }}
 
   test:
-    if: github.event_name == 'pull_request' || github.event.inputs.test
+    if: github.event_name == 'pull_request' || github.event.inputs.event_name == 'pull_request'
     runs-on: ubuntu-latest
     needs: build
     container:
@@ -75,7 +79,7 @@ jobs:
         run: bunx playwright@${{ steps.playwright.outputs.version }} --version
 
   cleanup:
-    if: always() && (github.event_name == 'pull_request' || github.event.inputs.test)
+    if: always() && (github.event_name == 'pull_request' || github.event.inputs.event_name == 'pull_request')
     runs-on: ubuntu-latest
     needs: [build, test]
     steps:
