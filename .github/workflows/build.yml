@@ -53,6 +53,8 @@ jobs:
     container:
       image: ghcr.io/gwennlbh/playwright-bun:pr-${{ github.sha }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
