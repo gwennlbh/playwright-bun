@@ -53,13 +53,32 @@ jobs:
     container:
       image: ghcr.io/gwennlbh/playwright-bun:pr-${{ github.sha }}
     steps:
-      - name: Try installing bun
+      - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: stable
       - name: Check bun version
         run: bun --version
-      - name: Check playwright version
+      - name: Get declared playwright version
+        id: playwright
+        run: |
+          echo "version=$(grep ^FROM Dockerfile | cut -d: -f 2 | cut -d'-' -f1 | sed s/v//)" >> $GITHUB_OUTPUT
+      - name: Try running playwright
         run: bunx playwright --version
 
-     
+  cleanup:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    steps:
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Delete Docker image
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          delete-tags: pr-${{ github.sha }}
+          
