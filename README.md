@@ -5,7 +5,7 @@ jobs:
   my-job:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/gwennlbh/playwright-bun:v1.55.0-noble
+      image: ghcr.io/gwennlbh/playwright-bun:v1.55.0
       options: --user 1001
     steps:
       - uses: actions/checkout@v5
