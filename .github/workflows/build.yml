@@ -88,5 +88,5 @@ jobs:
       - name: Delete Docker image
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
-          delete-tags: pr-${{ github.sha }}
+          delete-tags: ghcr.io/${{ github.repository }}:pr-${{ github.sha }}
           
