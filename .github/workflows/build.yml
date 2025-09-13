@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "version=$(grep ^FROM Dockerfile | cut -d: -f 2 | cut -d'-' -f1 | sed s/v//)" >> $GITHUB_OUTPUT
       - name: Try running playwright
-        run: bunx playwright --version
+        run: bunx playwright@${{ steps.playwright.outputs.version }} --version
 
   cleanup:
     if: github.event_name == 'pull_request'
