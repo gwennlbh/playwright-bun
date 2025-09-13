@@ -2,6 +2,8 @@ name: Cleanup Docker images
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sundays at midnight
 
 jobs:
   cleanup:
