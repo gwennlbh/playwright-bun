@@ -6,10 +6,15 @@ on:
       event_name: 
         type: choice
         description: Simulate the event that triggered the workflow
-        default: pull_request
+        default: push
         options:
           - push
           - pull_request
+      tag:
+        type: string
+        description: Set playwright tag to build. Defaults to the current tag
+        required: false
+
   push:
     branches: [main]
   pull_request:
@@ -26,20 +31,30 @@ jobs:
           - registry: ghcr.io
             path: ${{ github.repository }}
             user: ${{ github.actor }}
-            pass: ${{ github.token }}
           - registry: docker.io
             path: gwennlbh/playwright-bun 
             user: gwennlbh
-            pass: ${{ secrets.DOCKERHUB_TOKEN }} }
     steps:
-      - name: Login to ghcr.io
+      - if: matrix.registry == 'ghcr.io'
+        name: Login to ghcr.io
         uses: docker/login-action@v3
         with:
           registry: ${{ matrix.registry }}
           username: ${{ matrix.user }}
-          password: ${{ matrix.pass }}
+          password: ${{ github.token }}
+      - if: matrix.registry == 'docker.io'
+        name: Login to docker.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ matrix.registry }}
+          username: ${{ matrix.user }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v5
+      - if: github.event.inputs.tag
+        name: Set Playwright version
+        run: |
+          sed -i "s/^FROM mcr.microsoft.com\/playwright:.*/FROM mcr.microsoft.com\/playwright:${{ github.event.inputs.tag }}/" Dockerfile
       - name: Get docker image tag
         id: original_image
         run: |
@@ -60,7 +75,6 @@ jobs:
           fi
         env:
           EVENT: ${{ github.event.inputs.event_name || github.event_name }}
-
           # Shaw! Guarana!! GIT GUD!
           SHAW: ${{ github.sha }}
       - name: Build Docker image

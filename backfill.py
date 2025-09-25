@@ -25,4 +25,4 @@ print(tags)
     
 
 for tag in tags:
-    run(["gh", "workflow", "run", "build-specific.yml", "-f", f"version={tag}"])
+    run(["gh", "workflow", "run", "build.yml", "-f", f"tag={tag}"])
