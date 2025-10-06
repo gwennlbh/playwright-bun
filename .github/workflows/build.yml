@@ -73,7 +73,7 @@ jobs:
               echo "tags=`tagurl $tag`" >> $GITHUB_OUTPUT
             fi
           else
-            tag=$(grep ^FROM Dockerfile | cut -d ':' -f 2)
+            tag=$(grep ^FROM Dockerfile | cut -d ':' -f 2 | tr -d '\r')
             echo "tags=`tagurl $tag`,`tagurl latest`" >> $GITHUB_OUTPUT
             echo "version=$tag" >> $GITHUB_OUTPUT
           fi
@@ -121,7 +121,7 @@ jobs:
       - name: Get declared playwright version
         id: playwright
         run: |
-          echo "version=$(grep ^FROM Dockerfile | cut -d: -f 2 | cut -d'-' -f1 | sed s/v//)" >> $GITHUB_OUTPUT
+          echo "version=$(grep ^FROM Dockerfile | cut -d: -f 2 | cut -d'-' -f1 | sed s/v// | tr -d '\r')" >> $GITHUB_OUTPUT
       - name: Try running playwright
         run: bunx playwright@${{ steps.playwright.outputs.version }} --version
 
