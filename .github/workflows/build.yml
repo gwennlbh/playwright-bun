@@ -24,6 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       packages: write
     strategy:
       matrix:
@@ -45,6 +46,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - if: github.event.inputs.tag
         name: Set Playwright version
         run: |
@@ -72,10 +75,27 @@ jobs:
           else
             tag=$(grep ^FROM Dockerfile | cut -d ':' -f 2)
             echo "tags=`tagurl $tag`,`tagurl latest`" >> $GITHUB_OUTPUT
+            echo "version=$tag" >> $GITHUB_OUTPUT
           fi
         env:
           EVENT: ${{ github.event.inputs.event_name || github.event_name }}
           SHAW: ${{ github.sha }} # Shaw! Guarana!! GIT GUD!
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.registry == 'ghcr.io'
+        name: Update README with new version
+        run: |
+          version="${{ steps.original_image.outputs.version }}"
+          if [ -n "$version" ]; then
+            sed -i "s|image: ghcr.io/gwennlbh/playwright-bun:.*|image: ghcr.io/gwennlbh/playwright-bun:$version|" README.md
+            if git diff --quiet README.md; then
+              echo "No changes to README.md"
+            else
+              git config --global user.name "github-actions[bot]"
+              git config --global user.email "github-actions[bot]@users.noreply.github.com"
+              git add README.md
+              git commit -m "📝 Update README image tag to $version"
+              git push
+            fi
+          fi
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
