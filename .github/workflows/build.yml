@@ -44,7 +44,7 @@ jobs:
           username: gwennlbh
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - if: github.event.inputs.tag
         name: Set Playwright version
         run: |
@@ -91,7 +91,7 @@ jobs:
       image: ghcr.io/gwennlbh/playwright-bun:pr-${{ github.sha }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install bun
         uses: oven-sh/setup-bun@v2
         with:
