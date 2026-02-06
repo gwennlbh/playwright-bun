@@ -1,5 +1,5 @@
 # Use the official playwright docker image
-FROM mcr.microsoft.com/playwright:v1.58.1
+FROM mcr.microsoft.com/playwright:v1.58.2
 
 # Install unzip and curl (required by bun)
 # Install rsync (required by JamesIves/github-pages-deploy-action)
