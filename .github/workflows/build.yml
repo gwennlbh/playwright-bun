@@ -76,7 +76,8 @@ jobs:
         env:
           EVENT: ${{ github.event.inputs.event_name || github.event_name }}
           SHAW: ${{ github.sha }} # Shaw! Guarana!! GIT GUD!
-      - name: Build Docker image
+      - if: steps.original_image.outputs.tags
+        name: Build Docker image
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile
