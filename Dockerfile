@@ -1,5 +1,5 @@
 # Use the official playwright docker image
-FROM mcr.microsoft.com/playwright:v1.59.1
+FROM mcr.microsoft.com/playwright:v1.60.0
 
 # Set the repo meta label (useful to Renovate for example)
 LABEL org.opencontainers.image.source="https://github.com/gwennlbh/playwright-bun"
