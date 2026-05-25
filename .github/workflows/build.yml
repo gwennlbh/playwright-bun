@@ -77,12 +77,18 @@ jobs:
           EVENT: ${{ github.event.inputs.event_name || github.event_name }}
           SHAW: ${{ github.sha }} # Shaw! Guarana!! GIT GUD!
       - if: steps.original_image.outputs.tags
+        name: Compute image build date
+        id: build_date
+        run: echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+      - if: steps.original_image.outputs.tags
         name: Build Docker image
         uses: docker/build-push-action@v7
         with:
           file: Dockerfile
           push: true
           tags: ${{ steps.original_image.outputs.tags }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.build_date.outputs.created }}
 
   test:
     if: github.event_name == 'pull_request' || github.event.inputs.event_name == 'pull_request'
